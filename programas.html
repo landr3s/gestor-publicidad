@@ -19,6 +19,7 @@
     <main>
       <form id="programasForm">
         <h2>Registrar Programa</h2>
+
         <label for="nombre">Nombre del Programa</label>
         <input
           type="text"
@@ -36,12 +37,60 @@
         />
 
         <label for="franja">Franja Horaria</label>
-        <input
-          type="text"
-          id="franja"
-          name="franja"
-          required
-        />
+        <div>
+          <input
+            type="time"
+            id="horaInicio"
+            name="horaInicio"
+            placeholder="Hora de Inicio"
+          />
+          <input
+            type="text"
+            id="diaSemana"
+            name="diaSemana"
+            placeholder="Día de la Semana"
+          />
+          <input
+            type="number"
+            id="duracion"
+            name="duracion"
+            placeholder="Duración (minutos)"
+          />
+        </div>
+
+        <label for="tipoEmision">Tipo de Emisión</label>
+        <div>
+          <input
+            type="radio"
+            id="cadena"
+            name="tipoEmision"
+            value="cadena"
+            onclick="toggleEmisora(false)"
+          />
+          <label for="cadena">Cadena</label>
+          <input
+            type="radio"
+            id="emisora"
+            name="tipoEmision"
+            value="emisora"
+            onclick="toggleEmisora(true)"
+          />
+          <label for="emisora">Emisora</label>
+        </div>
+
+        <label for="emisoraSeleccionada">Selecciona una Emisora</label>
+        <select
+          id="emisoraSeleccionada"
+          name="emisoraSeleccionada"
+          disabled
+        ></select>
+
+        <label for="cadenaSeleccionada">Selecciona una Cadena</label>
+        <select
+          id="cadenaSeleccionada"
+          name="cadenaSeleccionada"
+          disabled
+        ></select>
 
         <label for="patrocinadores">Patrocinadores Asociados</label>
         <select
@@ -62,19 +111,45 @@
       const programasForm = document.getElementById('programasForm')
       const programasList = document.getElementById('programasList')
       const patrocinadoresSelect = document.getElementById('patrocinadores')
+      const emisoraSelect = document.getElementById('emisoraSeleccionada')
+      const cadenaSelect = document.getElementById('cadenaSeleccionada')
 
       const cargarPatrocinadores = () => {
         const patrocinadores =
           JSON.parse(localStorage.getItem('patrocinadores')) || []
         patrocinadoresSelect.innerHTML = patrocinadores
           .map(
-            patrocinador => `
-              <option value="${patrocinador.contrato}">${patrocinador.nombre}</option>
+            patrocinador => ` 
+              <option value="${patrocinador.contrato}">${patrocinador.nombre}</option> 
             `
           )
           .join('')
       }
 
+      // Cargar las emisoras en el select
+      const cargarEmisoras = () => {
+        const emisoras = JSON.parse(localStorage.getItem('emisoras')) || []
+        emisoraSelect.innerHTML = emisoras
+          .map(
+            emisora => `
+              <option value="${emisora.nombre}">${emisora.nombre}</option>
+            `
+          )
+          .join('')
+      }
+
+      const cargarCadenas = () => {
+        const cadenas = JSON.parse(localStorage.getItem('cadenas')) || []
+        cadenaSelect.innerHTML = cadenas
+          .map(
+            cadena => `
+              <option value="${cadena.nombre}">${cadena.nombre}</option>
+            `
+          )
+          .join('')
+      }
+
+      // Cargar los programas y mostrar "ninguna" si es emisora
       const cargarProgramas = () => {
         const programas = JSON.parse(localStorage.getItem('programas')) || []
         programasList.innerHTML = programas
@@ -89,11 +164,21 @@
                     ? programa.patrocinadores.join(', ')
                     : 'Ninguno'
                 }</p>
+                <p><strong>Emisión:</strong> ${
+                  programa.tipoEmision === 'emisora'
+                    ? 'Ninguna'
+                    : programa.cadena
+                }</p>
                 <button onclick="eliminarPrograma(${index})">Eliminar</button>
               </div>
             `
           )
           .join('')
+      }
+
+      const toggleEmisora = isEmisora => {
+        emisoraSelect.disabled = !isEmisora
+        cadenaSelect.disabled = isEmisora
       }
 
       programasForm.addEventListener('submit', e => {
@@ -106,7 +191,10 @@
         const nuevoPrograma = {
           nombre: programasForm.nombre.value,
           responsable: programasForm.responsable.value,
-          franja: programasForm.franja.value,
+          franja: `${programasForm.diaSemana.value} ${programasForm.horaInicio.value} ${programasForm.duracion.value} minutos`,
+          tipoEmision: programasForm.tipoEmision.value,
+          emisora: programasForm.emisoraSeleccionada.value,
+          cadena: programasForm.cadenaSeleccionada.value,
           patrocinadores: seleccionados
         }
 
@@ -126,6 +214,8 @@
 
       window.onload = () => {
         cargarPatrocinadores()
+        cargarEmisoras()
+        cargarCadenas()
         cargarProgramas()
       }
     </script>

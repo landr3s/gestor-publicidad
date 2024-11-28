@@ -1,6 +1,6 @@
 # Sistema de Gestión de Publicidad en Programas de Televisión
 
-Este proyecto tiene como objetivo gestionar los programas de televisión y sus patrocinadores asociados, así como calcular el costo total de la publicidad en cada programa basado en la duración del anuncio y el precio por segundo. El sistema permite registrar programas, asociar patrocinadores, y calcular el costo de la publicidad en tiempo real.
+Este proyecto tiene como objetivo gestionar los programas de televisión y sus patrocinadores asociados, calcular el costo total de la publicidad en cada programa basado en la duración del anuncio y el precio por segundo, y representar estos datos mediante clases en un sistema web. El sistema permite registrar programas, asociar patrocinadores, calcular el costo de la publicidad y visualizarlos en tiempo real.
 
 ## Descripción del Sistema
 
@@ -52,40 +52,38 @@ El esquema lógico relacional se basa en la siguiente estructura de base de dato
 
 En el front-end, cada tabla de la base de datos será representada por una clase en JavaScript. A continuación, se describen las clases correspondientes:
 
-1. **Clase `Patrocinador`**:
+### **Clase `Patrocinador`**:
 
-   - **Atributos**:
-     - `contrato`: Número de contrato del patrocinador.
-     - `nombre`: Nombre del patrocinador.
-     - `duracion`: Duración del anuncio.
-     - `precio`: Precio por segundo.
+- **Atributos**:
+  - `contrato`: Número de contrato del patrocinador.
+  - `nombre`: Nombre del patrocinador.
+  - `duracion`: Duración del anuncio.
+  - `precio`: Precio por segundo.
 
-   **Métodos**:
+**Métodos**:
 
-   - `guardar()`: Guarda los datos del patrocinador en el localStorage.
-   - `eliminar()`: Elimina un patrocinador del localStorage.
+- `guardar()`: Guarda los datos del patrocinador en el localStorage.
+- `eliminar()`: Elimina un patrocinador del localStorage.
 
-2. **Clase `Programa`**:
+### **Clase `Programa`**:
 
-   - **Atributos**:
-     - `nombre`: Nombre del programa.
-     - `responsable`: Responsable del programa.
-     - `franja`: Franja horaria del programa.
-     - `patrocinadores`: Array de contratos de patrocinadores asociados.
+- **Atributos**:
+  - `nombre`: Nombre del programa.
+  - `responsable`: Responsable del programa.
+  - `franja`: Franja horaria del programa.
+  - `patrocinadores`: Array de contratos de patrocinadores asociados.
 
-   **Métodos**:
+**Métodos**:
 
-   - `guardar()`: Guarda el programa en el localStorage.
-   - `eliminar()`: Elimina un programa del localStorage.
-   - `calcularCosto()`: Calcula el costo total de la publicidad del programa basado en los patrocinadores asociados.
+- `guardar()`: Guarda el programa en el localStorage.
+- `eliminar()`: Elimina un programa del localStorage.
+- `calcularCosto()`: Calcula el costo total de la publicidad del programa basado en los patrocinadores asociados.
 
 ### **Diagrama de Clases**
 
 - **Clase `Patrocinador`**:
-
   - Atributos: contrato, nombre, duracion, precio
   - Métodos: guardar(), eliminar()
-
 - **Clase `Programa`**:
   - Atributos: nombre, responsable, franja, patrocinadores
   - Métodos: guardar(), eliminar(), calcularCosto()
@@ -111,10 +109,14 @@ El front-end se estructura de la siguiente manera:
 ## Ejemplo de Uso
 
 1. Registra patrocinadores con los siguientes datos:
+
    - Contrato: 123, Nombre: "Patrocinador A", Duración: 10 segundos, Precio: $5 por segundo.
    - Contrato: 456, Nombre: "Patrocinador B", Duración: 20 segundos, Precio: $3 por segundo.
+
 2. Registra un programa con los siguientes datos:
+
    - Nombre: "Programa A", Responsable: "Juan Pérez", Franja: "8:00 AM - 9:00 AM", Patrocinadores: "123, 456".
+
 3. Calcula el costo de publicidad del "Programa A". El cálculo será:
    - **Patrocinador A**: 10 segundos × $5 = $50
    - **Patrocinador B**: 20 segundos × $3 = $60

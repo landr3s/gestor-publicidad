@@ -14,6 +14,7 @@ El sistema consta de las siguientes partes:
 4. **Gestión de Cadenas**: Permite registrar las cadenas de televisión en las que los programas son transmitidos.
 5. **Gestión de Emisoras**: Permite registrar emisoras de radio asociadas a las cadenas y a los programas.
 6. **Gestión de Empresas**: Permite registrar las empresas que patrocinan los programas y gestionar sus contratos.
+7. **Cálculo de Costos**: Permite calcular los costos de la publicidad basados en múltiples factores, incluyendo duración de los anuncios y tarifas por segundo.
 
 ### **Flujo de Trabajo:**
 
@@ -23,6 +24,7 @@ El sistema consta de las siguientes partes:
 4. **Registrar Emisoras**: Se registran emisoras de radio asociadas a las cadenas.
 5. **Registrar Empresas**: Se registran las empresas patrocinadoras, junto con los contratos y duración de la publicidad.
 6. **Calcular Costo de Publicidad**: Se selecciona un programa y, basado en los patrocinadores asociados, se calcula el costo total de la publicidad sumando los costos de cada patrocinador.
+7. **Calcular Costos Adicionales**: El sistema permite calcular costos adicionales de la publicidad considerando otros factores como el tiempo de emisión, tipo de anuncio y tarifas específicas.
 
 ## Esquema Lógico Relacional
 
@@ -59,21 +61,32 @@ El esquema lógico relacional se basa en la siguiente estructura de base de dato
      - `ubicacion`: Ubicación de la emisora.
 
 5. **Empresas**:
+
    - **Atributos**:
      - `id_empresa` (PK): Identificador de la empresa.
      - `nombre`: Nombre de la empresa.
      - `direccion`: Dirección de la empresa.
      - `telefono`: Teléfono de contacto.
 
+6. **Calculo**:
+   - **Atributos**:
+     - `id_calculo` (PK): Identificador único para cada cálculo.
+     - `programa_id` (FK): Relacionado con el programa de televisión.
+     - `patrocinador_id` (FK): Relacionado con el patrocinador.
+     - `costo_total`: Costo total calculado para ese patrocinador en el programa.
+     - `duracion`: Duración del anuncio en segundos.
+     - `precio_por_segundo`: Precio por segundo del anuncio.
+
 ### **Esquema Relacional:**
 
-| Tabla              | Atributos                                             |
-| ------------------ | ----------------------------------------------------- |
-| **Patrocinadores** | contrato (PK), nombre, duracion, precio               |
-| **Programas**      | nombre (PK), responsable, franja, patrocinadores (FK) |
-| **Cadenas**        | nombre (PK), emisora                                  |
-| **Emisoras**       | nombre (PK), ubicacion                                |
-| **Empresas**       | id_empresa (PK), nombre, direccion, telefono          |
+| Tabla              | Atributos                                                                                          |
+| ------------------ | -------------------------------------------------------------------------------------------------- |
+| **Patrocinadores** | contrato (PK), nombre, duracion, precio                                                            |
+| **Programas**      | nombre (PK), responsable, franja, patrocinadores (FK)                                              |
+| **Cadenas**        | nombre (PK), emisora                                                                               |
+| **Emisoras**       | nombre (PK), ubicacion                                                                             |
+| **Empresas**       | id_empresa (PK), nombre, direccion, telefono                                                       |
+| **Calculo**        | id_calculo (PK), programa_id (FK), patrocinador_id (FK), costo_total, duracion, precio_por_segundo |
 
 ## Clases para el Front-End
 
@@ -141,6 +154,22 @@ En el front-end, cada tabla de la base de datos será representada por una clase
 - `guardar()`: Guarda los datos de la empresa en el localStorage.
 - `eliminar()`: Elimina una empresa del localStorage.
 
+### **Clase `Calculo`**:
+
+- **Atributos**:
+  - `id_calculo`: Identificador único para cada cálculo.
+  - `programa_id`: Relacionado con el programa de televisión.
+  - `patrocinador_id`: Relacionado con el patrocinador.
+  - `costo_total`: Costo total calculado para ese patrocinador en el programa.
+  - `duracion`: Duración del anuncio en segundos.
+  - `precio_por_segundo`: Precio por segundo del anuncio.
+
+**Métodos**:
+
+- `guardar()`: Guarda el cálculo en el localStorage.
+- `eliminar()`: Elimina un cálculo del localStorage.
+- `calcularCostoTotal()`: Calcula el costo total de la publicidad basado en la duración y el precio por segundo.
+
 ### **Diagrama de Clases**
 
 - **Clase `Patrocinador`**:
@@ -162,54 +191,40 @@ En el front-end, cada tabla de la base de datos será representada por una clase
   - Métodos: guardar(), eliminar()
 
 - **Clase `Empresa`**:
+
   - Atributos: id_empresa, nombre, direccion, telefono
   - Métodos: guardar(), eliminar()
+
+- **Clase `Calculo`**:
+  - Atributos: id_calculo, programa_id, patrocinador_id, costo_total, duracion, precio_por_segundo
+  - Métodos: guardar(), eliminar(), calcularCostoTotal()
 
 ## Implementación Front-End
 
 El front-end se estructura de la siguiente manera:
 
 1. **HTML**:
-
-   - Se incluyen formularios para registrar programas, patrocinadores, cadenas, emisoras y empresas.
-   - Se utiliza una lista desplegable (`<select>`) para mostrar los programas, emisoras y cadenas disponibles.
-   - El cálculo de costos se realiza con un formulario que al seleccionar un programa, muestra el costo total basado en los patrocinadores asociados.
-
+   - Formularios para registrar programas, patrocinadores, cadenas, emisoras y empresas.
+   - Un listado de programas con sus respectivos patrocinadores y costos.
 2. **CSS**:
 
-   - Se incluyen estilos básicos para la presentación del contenido en una interfaz amigable.
+   - Estilos básicos para la presentación y organización de la interfaz.
 
 3. **JavaScript**:
-   - Los datos se almacenan en el navegador utilizando `localStorage`.
-   - Se utiliza JavaScript para manejar la interacción con los formularios y los cálculos.
+   - Los datos se almacenan en `localStorage`.
+   - Manejo de la interacción con formularios y cálculos de costos.
 
 ## Ejemplo de Uso
 
 1. Registra patrocinadores con los siguientes datos:
-
    - Contrato: 123, Nombre: "Patrocinador A", Duración: 10 segundos, Precio: $5 por segundo.
    - Contrato: 456, Nombre: "Patrocinador B", Duración: 20 segundos, Precio: $3 por segundo.
-
 2. Registra un programa con los siguientes datos:
-
    - Nombre: "Programa A", Responsable: "Juan Pérez", Franja: "8:00 AM - 9:00 AM", Patrocinadores: "123, 456".
-
-3. Registra una cadena con los siguientes datos:
-
-   - Nombre: "Cadena A", Emisora: "Emisora 1".
-
-4. Registra una emisora con los siguientes datos:
-
-   - Nombre: "Emisora 1", Ubicación: "Ciudad X".
-
-5. Registra una empresa con los siguientes datos:
-
+3. Registra una cadena y emisora.
+4. Registra una empresa con los siguientes datos:
    - Id: 001, Nombre: "Empresa A", Dirección: "Calle Falsa 123", Teléfono: "123-456-7890".
-
-6. Calcula el costo de publicidad del "Programa A". El cálculo será:
-   - **Patrocinador A**: 10 segundos × $5 = $50
-   - **Patrocinador B**: 20 segundos × $3 = $60
-   - **Costo total**: $50 + $60 = $110
+5. Calcula el costo de publicidad del "Programa A" basado en los patrocinadores.
 
 Este cálculo será mostrado en la interfaz de usuario.
 

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Gestión de Patrocinadores</title>
+    <link
+      rel="stylesheet"
+      href="patrocinadores.css"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>Gestión de Patrocinadores</h1>
+    </header>
+    <main>
+      <form id="patrocinadoresForm">
+        <h2>Registrar Patrocinador</h2>
+        <label for="contrato">Número de Contrato</label>
+        <input
+          type="text"
+          id="contrato"
+          name="contrato"
+          required
+        />
+        <label for="nombre">Nombre del Patrocinador</label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          required
+        />
+        <label for="duracion">Duración del Anuncio (segundos por semana)</label>
+        <input
+          type="number"
+          id="duracion"
+          name="duracion"
+          required
+          step="0.01"
+          Permite
+          decimales
+          --
+        />
+
+        <label for="precio">Precio por Segundo</label>
+        <input
+          type="number"
+          id="precio"
+          name="precio"
+          required
+          step="0.01"
+          Permite
+          decimales
+          --
+        />
+
+        <button type="submit">Guardar Patrocinador</button>
+      </form>
+      <section id="patrocinadoresList">
+        <h2>Patrocinadores Registrados</h2>
+      </section>
+    </main>
+    <script>
+      const patrocinadoresForm = document.getElementById('patrocinadoresForm')
+      const patrocinadoresList = document.getElementById('patrocinadoresList')
+
+      const cargarPatrocinadores = () => {
+        const patrocinadores =
+          JSON.parse(localStorage.getItem('patrocinadores')) || []
+        patrocinadoresList.innerHTML = patrocinadores
+          .map(
+            (patrocinador, index) => ` 
+        <div class="patrocinador">
+          <p><strong>Contrato:</strong> ${patrocinador.contrato}</p>
+          <p><strong>Nombre:</strong> ${patrocinador.nombre}</p>
+          <p><strong>Duración:</strong> ${patrocinador.duracion} segundos</p>
+          <p><strong>Precio por Segundo:</strong> $${patrocinador.precio}</p>
+          <button onclick="eliminarPatrocinador(${index})">Eliminar</button>
+        </div>
+      `
+          )
+          .join('')
+      }
+
+      patrocinadoresForm.addEventListener('submit', e => {
+        e.preventDefault()
+        const nuevoPatrocinador = {
+          contrato: patrocinadoresForm.contrato.value,
+          nombre: patrocinadoresForm.nombre.value,
+          duracion: parseFloat(patrocinadoresForm.duracion.value),
+          precio: parseFloat(patrocinadoresForm.precio.value)
+        }
+
+        if (
+          isNaN(nuevoPatrocinador.duracion) ||
+          nuevoPatrocinador.duracion <= 0
+        ) {
+          alert('La duración debe ser un valor positivo.')
+          return
+        }
+        if (isNaN(nuevoPatrocinador.precio) || nuevoPatrocinador.precio <= 0) {
+          alert('El precio debe ser un valor positivo.')
+          return
+        }
+
+        const patrocinadores =
+          JSON.parse(localStorage.getItem('patrocinadores')) || []
+        patrocinadores.push(nuevoPatrocinador)
+        localStorage.setItem('patrocinadores', JSON.stringify(patrocinadores))
+        patrocinadoresForm.reset()
+        cargarPatrocinadores()
+      })
+
+      const eliminarPatrocinador = index => {
+        const patrocinadores =
+          JSON.parse(localStorage.getItem('patrocinadores')) || []
+        patrocinadores.splice(index, 1)
+        localStorage.setItem('patrocinadores', JSON.stringify(patrocinadores))
+        cargarPatrocinadores()
+      }
+
+      window.onload = cargarPatrocinadores
+    </script>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #0078d7;
+  color: white;
+  text-align: center;
+  padding: 10px;
+}
+
+main {
+  padding: 20px;
+}
+
+form,
+section {
+  background: #fff;
+  margin: 20px 0;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+  display: block;
+  margin: 5px 0;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+form button {
+  background-color: #0078d7;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #005bb5;
+}
+
+.cadena {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.cadena button {
+  background-color: #d9534f;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cadena button:hover {
+  background-color: #c9302c;
+}

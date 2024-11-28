@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Gestión de Empresas</title>
+    <link
+      rel="stylesheet"
+      href="empresas.css"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>Gestión de Empresas</h1>
+    </header>
+    <main>
+      <form id="empresasForm">
+        <h2>Registrar Empresa</h2>
+        <label for="nif">NIF</label>
+        <input
+          type="text"
+          id="nif"
+          name="nif"
+          required
+        />
+        <label for="nombre">Nombre</label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          required
+        />
+        <label for="direccion">Dirección</label>
+        <input
+          type="text"
+          id="direccion"
+          name="direccion"
+          required
+        />
+        <label for="director">Director</label>
+        <input
+          type="text"
+          id="director"
+          name="director"
+          required
+        />
+        <button type="submit">Guardar Empresa</button>
+      </form>
+      <section id="empresasList">
+        <h2>Empresas Registradas</h2>
+
+      </section>
+    </main>
+    <script>
+      const empresasForm = document.getElementById('empresasForm')
+      const empresasList = document.getElementById('empresasList')
+
+      const cargarEmpresas = () => {
+        const empresas = JSON.parse(localStorage.getItem('empresas')) || []
+        empresasList.innerHTML = empresas
+          .map(
+            (empresa, index) => `
+        <div class="empresa">
+          <p><strong>NIF:</strong> ${empresa.nif}</p>
+          <p><strong>Nombre:</strong> ${empresa.nombre}</p>
+          <p><strong>Dirección:</strong> ${empresa.direccion}</p>
+          <p><strong>Director:</strong> ${empresa.director}</p>
+          <button onclick="eliminarEmpresa(${index})">Eliminar</button>
+        </div>
+      `
+          )
+          .join('')
+      }
+
+      empresasForm.addEventListener('submit', e => {
+        e.preventDefault()
+        const nuevaEmpresa = {
+          nif: empresasForm.nif.value,
+          nombre: empresasForm.nombre.value,
+          direccion: empresasForm.direccion.value,
+          director: empresasForm.director.value
+        }
+
+        const empresas = JSON.parse(localStorage.getItem('empresas')) || []
+        empresas.push(nuevaEmpresa)
+        localStorage.setItem('empresas', JSON.stringify(empresas))
+        empresasForm.reset()
+        cargarEmpresas()
+      })
+
+      const eliminarEmpresa = index => {
+        const empresas = JSON.parse(localStorage.getItem('empresas')) || []
+        empresas.splice(index, 1)
+        localStorage.setItem('empresas', JSON.stringify(empresas))
+        cargarEmpresas()
+      }
+
+      window.onload = cargarEmpresas
+    </script>
+  </body>
+</html>

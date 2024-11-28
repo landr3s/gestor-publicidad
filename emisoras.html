@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Gestión de Emisoras</title>
+    <link
+      rel="stylesheet"
+      href="emisoras.css"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>Gestión de Emisoras</h1>
+    </header>
+    <main>
+      <form id="emisorasForm">
+        <h2>Registrar Emisora</h2>
+        <label for="nif">NIF</label>
+        <input
+          type="text"
+          id="nif"
+          name="nif"
+          required
+        />
+        <label for="nombre">Nombre</label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          required
+        />
+        <label for="direccion">Dirección</label>
+        <input
+          type="text"
+          id="direccion"
+          name="direccion"
+          required
+        />
+        <label for="director">Director</label>
+        <input
+          type="text"
+          id="director"
+          name="director"
+          required
+        />
+        <label for="banda">Banda Hertziana</label>
+        <input
+          type="text"
+          id="banda"
+          name="banda"
+          required
+        />
+        <button type="submit">Guardar Emisora</button>
+      </form>
+      <section id="emisorasList">
+        <h2>Emisoras Registradas</h2>
+        <!-- Lista dinámica -->
+      </section>
+    </main>
+    <script>
+      const emisorasForm = document.getElementById('emisorasForm')
+      const emisorasList = document.getElementById('emisorasList')
+
+      const cargarEmisoras = () => {
+        const emisoras = JSON.parse(localStorage.getItem('emisoras')) || []
+        emisorasList.innerHTML = emisoras
+          .map(
+            (emisora, index) => `
+        <div class="emisora">
+          <p><strong>NIF:</strong> ${emisora.nif}</p>
+          <p><strong>Nombre:</strong> ${emisora.nombre}</p>
+          <p><strong>Dirección:</strong> ${emisora.direccion}</p>
+          <p><strong>Director:</strong> ${emisora.director}</p>
+          <p><strong>Banda:</strong> ${emisora.banda}</p>
+          <button onclick="eliminarEmisora(${index})">Eliminar</button>
+        </div>
+      `
+          )
+          .join('')
+      }
+
+      emisorasForm.addEventListener('submit', e => {
+        e.preventDefault()
+        const nuevaEmisora = {
+          nif: emisorasForm.nif.value,
+          nombre: emisorasForm.nombre.value,
+          direccion: emisorasForm.direccion.value,
+          director: emisorasForm.director.value,
+          banda: emisorasForm.banda.value
+        }
+
+        const emisoras = JSON.parse(localStorage.getItem('emisoras')) || []
+        emisoras.push(nuevaEmisora)
+        localStorage.setItem('emisoras', JSON.stringify(emisoras))
+        emisorasForm.reset()
+        cargarEmisoras()
+      })
+
+      const eliminarEmisora = index => {
+        const emisoras = JSON.parse(localStorage.getItem('emisoras')) || []
+        emisoras.splice(index, 1)
+        localStorage.setItem('emisoras', JSON.stringify(emisoras))
+        cargarEmisoras()
+      }
+
+      window.onload = cargarEmisoras
+    </script>
+  </body>
+</html>

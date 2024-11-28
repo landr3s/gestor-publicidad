@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Gestión de Programas</title>
+    <link
+      rel="stylesheet"
+      href="programas.css"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>Gestión de Programas</h1>
+    </header>
+    <main>
+      <form id="programasForm">
+        <h2>Registrar Programa</h2>
+        <label for="nombre">Nombre del Programa</label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          required
+        />
+
+        <label for="responsable">Responsable</label>
+        <input
+          type="text"
+          id="responsable"
+          name="responsable"
+          required
+        />
+
+        <label for="franja">Franja Horaria</label>
+        <input
+          type="text"
+          id="franja"
+          name="franja"
+          required
+        />
+
+        <label for="patrocinadores">Patrocinadores Asociados</label>
+        <select
+          id="patrocinadores"
+          name="patrocinadores"
+          multiple
+        ></select>
+
+        <button type="submit">Guardar Programa</button>
+      </form>
+
+      <section id="programasList">
+        <h2>Programas Registrados</h2>
+      </section>
+    </main>
+
+    <script>
+      const programasForm = document.getElementById('programasForm')
+      const programasList = document.getElementById('programasList')
+      const patrocinadoresSelect = document.getElementById('patrocinadores')
+
+      const cargarPatrocinadores = () => {
+        const patrocinadores =
+          JSON.parse(localStorage.getItem('patrocinadores')) || []
+        patrocinadoresSelect.innerHTML = patrocinadores
+          .map(
+            patrocinador => `
+              <option value="${patrocinador.contrato}">${patrocinador.nombre}</option>
+            `
+          )
+          .join('')
+      }
+
+      const cargarProgramas = () => {
+        const programas = JSON.parse(localStorage.getItem('programas')) || []
+        programasList.innerHTML = programas
+          .map(
+            (programa, index) => `
+              <div class="programa">
+                <p><strong>Nombre:</strong> ${programa.nombre}</p>
+                <p><strong>Responsable:</strong> ${programa.responsable}</p>
+                <p><strong>Franja Horaria:</strong> ${programa.franja}</p>
+                <p><strong>Patrocinadores:</strong> ${
+                  programa.patrocinadores.length > 0
+                    ? programa.patrocinadores.join(', ')
+                    : 'Ninguno'
+                }</p>
+                <button onclick="eliminarPrograma(${index})">Eliminar</button>
+              </div>
+            `
+          )
+          .join('')
+      }
+
+      programasForm.addEventListener('submit', e => {
+        e.preventDefault()
+
+        const seleccionados = Array.from(
+          patrocinadoresSelect.selectedOptions
+        ).map(option => option.value)
+
+        const nuevoPrograma = {
+          nombre: programasForm.nombre.value,
+          responsable: programasForm.responsable.value,
+          franja: programasForm.franja.value,
+          patrocinadores: seleccionados
+        }
+
+        const programas = JSON.parse(localStorage.getItem('programas')) || []
+        programas.push(nuevoPrograma)
+        localStorage.setItem('programas', JSON.stringify(programas))
+        programasForm.reset()
+        cargarProgramas()
+      })
+
+      const eliminarPrograma = index => {
+        const programas = JSON.parse(localStorage.getItem('programas')) || []
+        programas.splice(index, 1)
+        localStorage.setItem('programas', JSON.stringify(programas))
+        cargarProgramas()
+      }
+
+      window.onload = () => {
+        cargarPatrocinadores()
+        cargarProgramas()
+      }
+    </script>
+  </body>
+</html>

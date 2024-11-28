@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Cálculo de Publicidad</title>
+    <link
+      rel="stylesheet"
+      href="calculo.css"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>Cálculo de Publicidad</h1>
+    </header>
+    <main>
+      <form id="calculoForm">
+        <h2>Seleccionar Programa</h2>
+        <label for="programa">Programa</label>
+        <select
+          id="programa"
+          name="programa"
+        ></select>
+        <button type="submit">Calcular Costo</button>
+      </form>
+
+      <section id="resultado">
+        <h2>Resultado del Cálculo</h2>
+        <p id="costo"></p>
+      </section>
+    </main>
+
+    <script>
+      const calculoForm = document.getElementById('calculoForm')
+      const programaSelect = document.getElementById('programa')
+      const costoResultado = document.getElementById('costo')
+
+      const cargarProgramas = () => {
+        const programas = JSON.parse(localStorage.getItem('programas')) || []
+        programaSelect.innerHTML = programas
+          .map(
+            programa => `
+            <option value="${programa.nombre}">${programa.nombre}</option>
+          `
+          )
+          .join('')
+      }
+
+      const calcularCosto = programa => {
+        const patrocinadores =
+          JSON.parse(localStorage.getItem('patrocinadores')) || []
+        const programas = JSON.parse(localStorage.getItem('programas')) || []
+        const seleccionado = programas.find(p => p.nombre === programa)
+        if (!seleccionado) {
+          costoResultado.textContent = 'Programa no encontrado.'
+          return
+        }
+
+        let totalCosto = 0
+        seleccionado.patrocinadores.forEach(contrato => {
+          const patrocinador = patrocinadores.find(p => p.contrato === contrato)
+          if (patrocinador) {
+            totalCosto += patrocinador.duracion * patrocinador.precio
+          }
+        })
+
+        costoResultado.textContent = `El costo total de la publicidad para el programa "${programa}" es: $${totalCosto.toFixed(
+          2
+        )}`
+      }
+
+      calculoForm.addEventListener('submit', e => {
+        e.preventDefault()
+        const programaSeleccionado = programaSelect.value
+        calcularCosto(programaSeleccionado)
+      })
+
+      window.onload = cargarProgramas
+    </script>
+  </body>
+</html>

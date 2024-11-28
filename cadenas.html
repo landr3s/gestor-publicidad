@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Gestión de Cadenas</title>
+    <link
+      rel="stylesheet"
+      href="cadenas.css"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>Gestión de Cadenas</h1>
+    </header>
+    <main>
+      <form id="cadenasForm">
+        <h2>Registrar Cadena</h2>
+        <label for="nombre">Nombre</label>
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          required
+        />
+        <label for="sedeCentral">Sede Central (NIF de Emisora)</label>
+        <select
+          id="sedeCentral"
+          name="sedeCentral"
+        ></select>
+        <label for="empresa">Empresa Asociada (NIF)</label>
+        <select
+          id="empresa"
+          name="empresa"
+        ></select>
+        <button type="submit">Guardar Cadena</button>
+      </form>
+      <section id="cadenasList">
+        <h2>Cadenas Registradas</h2>
+      </section>
+    </main>
+    <script>
+      const cadenasForm = document.getElementById('cadenasForm')
+      const cadenasList = document.getElementById('cadenasList')
+      const sedeCentralSelect = document.getElementById('sedeCentral')
+      const empresaSelect = document.getElementById('empresa')
+
+      const cargarDatos = () => {
+        const emisoras = JSON.parse(localStorage.getItem('emisoras')) || []
+        sedeCentralSelect.innerHTML = emisoras
+          .map(
+            emisora => `
+        <option value="${emisora.nif}">${emisora.nombre} (${emisora.nif})</option>
+      `
+          )
+          .join('')
+
+        const empresas = JSON.parse(localStorage.getItem('empresas')) || []
+        empresaSelect.innerHTML = empresas
+          .map(
+            empresa => `
+        <option value="${empresa.nif}">${empresa.nombre} (${empresa.nif})</option>
+      `
+          )
+          .join('')
+      }
+
+      const cargarCadenas = () => {
+        const cadenas = JSON.parse(localStorage.getItem('cadenas')) || []
+        cadenasList.innerHTML = cadenas
+          .map(
+            (cadena, index) => `
+        <div class="cadena">
+          <p><strong>Nombre:</strong> ${cadena.nombre}</p>
+          <p><strong>Sede Central:</strong> ${cadena.sedeCentral}</p>
+          <p><strong>Empresa Asociada:</strong> ${cadena.empresa}</p>
+          <button onclick="eliminarCadena(${index})">Eliminar</button>
+        </div>
+      `
+          )
+          .join('')
+      }
+
+      cadenasForm.addEventListener('submit', e => {
+        e.preventDefault()
+        const nuevaCadena = {
+          nombre: cadenasForm.nombre.value,
+          sedeCentral: cadenasForm.sedeCentral.value,
+          empresa: cadenasForm.empresa.value
+        }
+
+        const cadenas = JSON.parse(localStorage.getItem('cadenas')) || []
+        cadenas.push(nuevaCadena)
+        localStorage.setItem('cadenas', JSON.stringify(cadenas))
+        cadenasForm.reset()
+        cargarCadenas()
+      })
+
+      const eliminarCadena = index => {
+        const cadenas = JSON.parse(localStorage.getItem('cadenas')) || []
+        cadenas.splice(index, 1)
+        localStorage.setItem('cadenas', JSON.stringify(cadenas))
+        cargarCadenas()
+      }
+
+      window.onload = () => {
+        cargarDatos()
+        cargarCadenas()
+      }
+    </script>
+  </body>
+</html>
